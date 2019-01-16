@@ -12,18 +12,18 @@ RUN curl -SL https://developer.arm.com/-/media/Files/downloads/gnu-rm/6-2017q2/g
 tar xvjf /tmp/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 -C /usr/local/ && \
 rm /tmp/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2
 
-# Download NRF5 SDK v15.0.0 and extract nRF5 SDK to /nrf5/nRF5_SDK_15.0.0
-RUN curl -SL https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v15.x.x/nRF5_SDK_15.0.0_a53641a.zip > /tmp/SDK_15.0.0.zip && \
+# Download NRF5 SDK v15.2.0 and extract nRF5 SDK to /nrf5/nRF5_SDK_15.2.0
+RUN curl -SL https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v15.x.x/nRF5_SDK_15.2.0_9412b96.zip > /tmp/SDK_15.2.0.zip && \
 mkdir -p /nrf5 && \
-unzip -q /tmp/SDK_15.0.0.zip -d /nrf5 && \
-mv /nrf5/nRF5_SDK_15.0.0_a53641a /nrf5/nRF5_SDK_15.0.0 && \
-rm /tmp/SDK_15.0.0.zip
+unzip -q /tmp/SDK_15.2.0.zip -d /nrf5 && \
+mv /nrf5/nRF5_SDK_15.2.0_9412b96 /nrf5/nRF5_SDK_15.2.0 && \
+rm /tmp/SDK_15.2.0.zip
 
 # Add micro-ecc to SDK
 RUN curl -SL https://github.com/kmackay/micro-ecc/archive/v1.0.zip > /tmp/micro-ecc_v1.0.zip && \
-unzip -q /tmp/micro-ecc_v1.0.zip -d /nrf5/nRF5_SDK_15.0.0/external/micro-ecc && \
-mv /nrf5/nRF5_SDK_15.0.0/external/micro-ecc/micro-ecc-1.0 /nrf5/nRF5_SDK_15.0.0/external/micro-ecc/micro-ecc && \
-make -C /nrf5/nRF5_SDK_15.0.0/external/micro-ecc/nrf52hf_armgcc/armgcc && \
+unzip -q /tmp/micro-ecc_v1.0.zip -d /nrf5/nRF5_SDK_15.2.0/external/micro-ecc && \
+mv /nrf5/nRF5_SDK_15.2.0/external/micro-ecc/micro-ecc-1.0 /nrf5/nRF5_SDK_15.2.0/external/micro-ecc/micro-ecc && \
+make -C /nrf5/nRF5_SDK_15.2.0/external/micro-ecc/nrf52hf_armgcc/armgcc && \
 rm /tmp/micro-ecc_v1.0.zip
 
 # Install nRF Tools (makes it easy to build a DFU package)
