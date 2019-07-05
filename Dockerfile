@@ -4,7 +4,7 @@ MAINTAINER Charlie Bruce <charliebruce@gmail.com>
 # Download tools and prerequisites
 RUN apt-key update && \
 apt-get update && \
-apt-get install -y curl git unzip bzip2 build-essential gcc-multilib srecord pkg-config python && \
+apt-get install -y curl git unzip bzip2 build-essential gcc-multilib srecord pkg-config python libusb-1.0.0 && \
 apt-get clean all
 
 # Download and install ARM toolchain matching the SDK
