@@ -1,11 +1,10 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER Charlie Bruce <charliebruce@gmail.com>
 
 # Download tools and prerequisites
-RUN apt-key update && \
-apt-get update && \
+RUN apt-get update && \
 apt-get install -y curl git unzip bzip2 build-essential gcc-multilib srecord pkg-config python libusb-1.0.0 && \
-apt-get clean all
+apt-get clean all 
 
 # Download and install ARM toolchain matching the SDK
 RUN curl -SL https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2018q2/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2?revision=bc2c96c0-14b5-4bb4-9f18-bceb4050fee7?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Linux,7-2018-q2-update > /tmp/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2 && \
