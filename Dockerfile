@@ -1,5 +1,6 @@
 FROM ubuntu:18.04
 MAINTAINER Charlie Bruce <charliebruce@gmail.com>
+LABEL org.opencontainers.image.source https://github.com/charliebruce/nrf5-docker-build
 
 # Download tools and prerequisites
 RUN apt-get update && \
