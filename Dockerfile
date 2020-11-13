@@ -42,6 +42,6 @@ make -C /nrf5/nRF5_SDK_17.0.2/external/micro-ecc/nrf52nf_keil/armgcc && \
 rm /tmp/micro-ecc_v1.0.zip
 
 # Install nRF Tools (makes it easy to build a DFU package)
-RUN apt-get install -y python-pip && \
+RUN apt-get update && apt-get install -y python-pip && \
 pip install nrfutil
 
