@@ -8,9 +8,9 @@ apt-get install -y curl git unzip bzip2 build-essential gcc-multilib srecord pkg
 apt-get clean all 
 
 # Download and install ARM toolchain matching the SDK
-RUN curl -SL https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2018q2/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2?revision=bc2c96c0-14b5-4bb4-9f18-bceb4050fee7?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Linux,7-2018-q2-update > /tmp/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2 && \
-tar xvjf /tmp/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2 -C /usr/local/ && \
-rm /tmp/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2
+RUN curl -SL https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 > /tmp/gcc-arm-none-eabi-9-2019-q4-major-linux.tar.bz2 && \
+tar xvjf /tmp/gcc-arm-none-eabi-9-2019-q4-major-linux.tar.bz2 -C /usr/local/ && \
+rm /tmp/gcc-arm-none-eabi-9-2019-q4-major-linux.tar.bz2
 
 # Download NRF5 SDK v17.0.2 and extract nRF5 SDK to /nrf5/nRF5_SDK_17.0.2
 RUN curl -SL https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v17.x.x/nRF5_SDK_17.0.2_d674dde.zip > /tmp/SDK_17.0.2.zip && \
@@ -18,6 +18,13 @@ mkdir -p /nrf5 && \
 unzip -q /tmp/SDK_17.0.2.zip -d /nrf5/ && \
 mv /nrf5/nRF5_SDK_17.0.2_d674dde /nrf5/nRF5_SDK_17.0.2 && \
 rm /tmp/SDK_17.0.2.zip
+
+# Patch around what is likely to be an oversight in Nordic's SDK
+# https://devzone.nordicsemi.com/f/nordic-q-a/68352/gcc-toolchain-version-for-sdk-17-0-2-on-posix
+RUN \
+echo "GNU_INSTALL_ROOT ?= /usr/local/gcc-arm-none-eabi-9-2019-q4-major/bin/" > /nrf5/nRF5_SDK_17.0.2/components/toolchain/gcc/Makefile.posix && \
+echo "GNU_VERSION ?= 9.2.1" >> /nrf5/nRF5_SDK_17.0.2/components/toolchain/gcc/Makefile.posix && \
+echo "GNU_PREFIX ?= arm-none-eabi" >> /nrf5/nRF5_SDK_17.0.2/components/toolchain/gcc/Makefile.posix
 
 # Add micro-ecc to SDK and build it
 RUN curl -SL https://github.com/kmackay/micro-ecc/archive/v1.0.zip > /tmp/micro-ecc_v1.0.zip && \
