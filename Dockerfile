@@ -1,10 +1,12 @@
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 MAINTAINER Charlie Bruce <charliebruce@gmail.com>
 
+# tzdata presents an interactive prompt to set time zone.
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Download tools and prerequisites
-RUN apt-key update && \
-apt-get update && \
-apt-get install -y curl git unzip bzip2 build-essential gcc-multilib srecord pkg-config python && \
+RUN apt-get update && \
+apt-get install -y curl git unzip bzip2 build-essential srecord pkg-config && \
 apt-get clean all
 
 # Download and install ARM toolchain matching the SDK
@@ -27,6 +29,6 @@ make -C /nrf5/nRF5_SDK_15.2.0/external/micro-ecc/nrf52hf_armgcc/armgcc && \
 rm /tmp/micro-ecc_v1.0.zip
 
 # Install nRF Tools (makes it easy to build a DFU package)
-RUN apt-get install -y python-pip && \
-pip install nrfutil
+RUN apt-get install -y python3 python3-pip && \
+pip3 install nrfutil
 
