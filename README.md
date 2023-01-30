@@ -7,6 +7,6 @@ Also available on [Docker Hub](https://hub.docker.com/repository/docker/charlieb
 
 * nRF5 SDK (installed within `/nrf5/nRF5_SDK_x.y.z` with micro-ecc v1.0 added)
 * GCC ARM toolchain (to match SDK's expected version)
-* nrfutil
+* nrfutil ([iamfat's arm64-compatible fork](https://github.com/iamfat/pc-nrfutil))
 * srecord
 
