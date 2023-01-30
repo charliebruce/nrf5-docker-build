@@ -5,15 +5,29 @@ LABEL org.opencontainers.image.source https://github.com/charliebruce/nrf5-docke
 # tzdata presents an interactive prompt to set time zone.
 ENV DEBIAN_FRONTEND=noninteractive
 
+ARG TARGETARCH
+
 # Download tools and prerequisites
 RUN apt-get update && \
-apt-get install -y curl git unzip bzip2 build-essential gcc-multilib srecord pkg-config python libusb-1.0.0 && \
+apt-get install -y curl git unzip bzip2 build-essential srecord pkg-config python libusb-1.0.0 && \
 apt-get clean all 
 
-# Download and install ARM toolchain matching the SDK
-RUN curl -SL https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 > /tmp/gcc-arm-none-eabi-9-2020-q2-update-linux.tar.bz2 && \
-tar xvjf /tmp/gcc-arm-none-eabi-9-2020-q2-update-linux.tar.bz2 -C /usr/local/ && \
-rm /tmp/gcc-arm-none-eabi-9-2020-q2-update-linux.tar.bz2
+# Download and install the toolchain
+RUN echo "Host architecture: $TARGETARCH" && \
+case $TARGETARCH in \
+    "amd64") \
+        TOOLCHAIN_URL="https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2?revision=05382cca-1721-44e1-ae19-1e7c3dc96118&rev=05382cca172144e1ae191e7c3dc96118&hash=3ACFE672E449EBA7A21773EE284A88BC7DFA5044" \
+        ;; \
+    "arm64") \
+        TOOLCHAIN_URL="https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-aarch64-linux.tar.bz2?revision=7166404a-b4f5-4598-ac75-e5f8b90abb09&rev=7166404ab4f54598ac75e5f8b90abb09&hash=07EE5CACCCE77E97A1A8C049179D77EACA5AD4E5" \
+        ;; \
+    *) \
+        echo "Unsupported TARGETARCH: \"$TARGETARCH\"" >&2 && \
+        exit 1 ;; \
+esac && \
+curl -SL "${TOOLCHAIN_URL}" > /tmp/toolchain.tar.bz2 && \
+tar xvjf /tmp/toolchain.tar.bz2 -C /usr/local/ && \
+rm /tmp/toolchain.tar.bz2
 
 # Download NRF5 SDK v17.1.0 and extract nRF5 SDK to /nrf5/nRF5_SDK_17.1.0
 RUN curl -SL https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v17.x.x/nRF5_SDK_17.1.0_ddde560.zip > /tmp/SDK_17.1.0.zip && \
@@ -42,6 +56,11 @@ rm /tmp/micro-ecc_v1.0.zip
 # Ubuntu 20.04 comes with Python 3.8 (at the time of writing)
 RUN apt-get update && apt-get install -y python3 python3-pip
 
-# Install nRF Tools (makes it easy to build a DFU package)
-RUN pip install nrfutil==6.1.3
+# Install a fork of nRF Tools that does not require USB/BLE support
+# Older version of protobuf required because the pb2 files within pc-nrfutil are old
+RUN pip install protobuf==3.20.* && \
+cd /usr/local && \
+git clone https://github.com/iamfat/pc-nrfutil && \
+cd pc-nrfutil && \
+pip install .
 
