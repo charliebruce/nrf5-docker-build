@@ -54,8 +54,13 @@ rm /tmp/micro-ecc_v1.0.zip
 # nRF Tools v6.1.1 and later require Python 3.7 or later. 
 # Previous versions of the nRF Tools can't be installed because a dependency (pc_ble_driver_py) was renamed and can no longer be found.
 # Ubuntu 20.04 comes with Python 3.8 (at the time of writing)
-#RUN apt-get update && apt-get install -y python3 python3-pip
+RUN apt-get update && apt-get install -y python3 python3-pip
 
-# Install nRF Tools (makes it easy to build a DFU package)
-#RUN pip install nrfutil==6.1.3
+# Install a fork of nRF Tools that does not require USB/BLE support
+# Older version of protobuf required because the pb2 files within pc-nrfutil are old
+RUN pip install protobuf==3.20.* && \
+cd /usr/local && \
+git clone https://github.com/iamfat/pc-nrfutil && \
+cd pc-nrfutil && \
+pip install .
 
